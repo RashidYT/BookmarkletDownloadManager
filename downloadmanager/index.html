@@ -85,7 +85,11 @@
 <div class="downloadmanager-mydiv" id="downloadmanagerwindow" style="top: 0px;left: 0px;">
   <div class="downloadmanager-mydivheader" id="downloadmanagerwindowheader">
     <span class="title">Bookmarklet Download Manager</span>
-    <button class="close">X</button>
+    <button class="close" id="downloadmanager-close" onclick="
+    if (document.getElementById('downloadmanager_div')) {
+        document.getElementById('downloadmanager_div').remove()
+    }
+    ">X</button>
   </div>
   <div class="body">
     <div class="downloadmanager-container">
@@ -99,7 +103,7 @@
     </div>
   </div>
 </div>
-<img src="/downloadmanager/img/1x1.png" alt="Transparent pixel" onload="
+<img src="https://raw.githubusercontent.com/RashidYT/BookmarkletDownloadManager/0ba764fa2958016d096c0c57cf5c6120c828f5af/downloadmanager/img/1x1.png" alt="Transparent pixel" onload="
 var allimageelements = document.querySelectorAll('img')
 var allvideoelements = document.querySelectorAll('video')
 
