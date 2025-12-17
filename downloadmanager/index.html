@@ -1,0 +1,215 @@
+<style>
+:root {
+    --downloadmanager_width: 500px;
+    --downloadmanager_height: 400px;
+}
+
+.downloadmanager-mydiv {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  border: 3px solid #2196F3;
+  width: var(--downloadmanager_width);
+  height: var(--downloadmanager_height);
+}
+
+.downloadmanager-mydiv .body {
+  padding: 16px;
+  overflow: flex;
+}
+
+.downloadmanager-mydiv .body p {
+  margin: 0;
+}
+
+.downloadmanager-mydivheader {
+  padding: 7px;
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+  margin: 0;
+}
+
+.downloadmanager-mydivheader .title {
+    text-align: left;
+}
+
+.downloadmanager-mydivheader .close {
+    float: right;
+    background-color: #2196F3;
+    color: white;
+    border: outset #2196F3 2px;
+    cursor: pointer;
+}
+
+.downloadmanager-mydivheader .close:active {
+    border-style: inset;
+}
+
+.downloadmanager-container {
+    display: flex; /* Activates Flexbox on the parent */
+    gap: 20px;     /* Adds space between the child divs */
+    height: calc(var(--downloadmanager_width) - 170px);
+}
+
+.downloadmanager-left-div, .downloadmanager-right-div {
+    flex: 1; /* Makes both divs grow equally to fill the container width */
+    /* Optional styling */
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
+.downloadmanager-file {
+    padding: 16px;
+    background-color: #adadad;
+    color: white;
+    cursor: pointer;
+}
+
+.downloadmanager-file-image {
+    background-color: rgb(0, 255, 128);
+}
+
+.downloadmanager-file-video {
+    background-color: rgb(173, 0, 0);
+}
+
+.downloadmanager-container div {
+    /* To center content vertically and horizontally within the splits */
+    display: flex;
+    flex-direction: column;    
+}
+</style>
+<div class="downloadmanager-mydiv" id="downloadmanagerwindow" style="top: 0px;left: 0px;">
+  <div class="downloadmanager-mydivheader" id="downloadmanagerwindowheader">
+    <span class="title">Bookmarklet Download Manager</span>
+    <button class="close">X</button>
+  </div>
+  <div class="body">
+    <div class="downloadmanager-container">
+        <div class="downloadmanager-left-div" id="downloadmanager_files">
+        </div>
+        <div class="downloadmanager-right-div" id="downloadmanager_preview">
+            <!-- Content for the right section -->
+            <h2>Right Side</h2>
+            <p>This div is on the right.</p>
+        </div>
+    </div>
+  </div>
+</div>
+<img src="/downloadmanager/img/1x1.png" alt="Transparent pixel" onload="
+var allimageelements = document.querySelectorAll('img')
+var allvideoelements = document.querySelectorAll('video')
+
+// this script is from w3schools.com
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + 'header')) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the elements new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + 'px';
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + 'px';
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+dragElement(document.getElementById('downloadmanagerwindow'));
+
+// images
+for (let i = 0; i < allimageelements.length; i++) {
+    const filebutton = document.createElement('a')
+
+    filebutton.classList.add('downloadmanager-file')
+    filebutton.classList.add('downloadmanager-file-image')
+    filebutton.innerHTML = allimageelements[i].src
+    filebutton.setAttribute('onclick', `
+
+    document.getElementById('downloadmanager_preview').innerHTML = '';
+    const pictureviewer = document.createElement('img');
+    pictureviewer.setAttribute('src', '${allimageelements[i].src}');
+    pictureviewer.width = 200;
+    document.getElementById('downloadmanager_preview').appendChild(pictureviewer);
+
+    `)
+    document.getElementById('downloadmanager_files').appendChild(filebutton)
+}
+
+// videos
+for (let i = 0; i < allvideoelements.length; i++) {
+    const filebutton = document.createElement('a')
+
+    filebutton.classList.add('downloadmanager-file')
+    filebutton.classList.add('downloadmanager-file-video')
+    filebutton.innerHTML = allvideoelements[i].src
+    filebutton.setAttribute('onclick', `
+
+    document.getElementById('downloadmanager_preview').innerHTML = '';
+    const videoplayer = document.createElement('video');
+
+    videoplayer.setAttribute('src', '${allvideoelements[i].src}');
+    videoplayer.width = 200;
+    videoplayer.height = 200;
+    videoplayer.controls = true;
+
+    document.getElementById('downloadmanager_preview').appendChild(videoplayer);
+    
+    `)
+    document.getElementById('downloadmanager_files').appendChild(filebutton)
+}
+
+/*
+function showimage(url) {
+    document.getElementById('downloadmanager_preview').innerHTML = '';
+    var pictureviewer = document.createAttribute('img');
+
+    pictureviewer.src = url;
+    pictureviewer.style.width = '200px'
+
+    document.getElementById('downloadmanager_preview').appendChild(pictureviewer);
+}
+*/
+
+function showvideo(url) {
+    document.getElementById('downloadmanager_preview').innerHTML = '';
+    const videoplayer = document.createAttribute('video');
+
+    videoplayer.src = url;
+    videoplayer.style.width = 200 + 'px';
+    videoplayer.style.height = 200 + 'px';
+
+    document.getElementById('downloadmanager_preview').appendChild(videoplayer);
+}
+">
+
